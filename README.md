@@ -1,76 +1,138 @@
-# File Upload System with Node.js, Express, Multer and EJS
+# Modern File Uploader
 
-This project demonstrates how to implement file uploading functionality using Node.js with the Multer middleware and EJS templates.
+A modern, responsive file upload and management system built with Node.js, Express, and EJS.
 
 ## Features
 
-- Single file upload
-- Multiple file upload (up to 5 files)
-- File type validation (images and PDFs only)
-- File size limiting (10MB)
-- Drag and drop interface
-- Responsive design using Bootstrap
-- Preview of uploaded image files
-- List of all uploaded files
+- 🚀 Modern and responsive UI
+- 📤 Drag and drop file upload
+- 📁 Multiple file upload support
+- 🖼️ Image preview and thumbnails
+- 🔍 File search and filtering
+- 📊 File size and type information
+- 🗑️ File deletion
+- 📱 Mobile-friendly design
+
+## Prerequisites
+
+- Node.js (v14 or higher)
+- npm (v6 or higher)
 
 ## Installation
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/file-upload-with-multer.git
-   cd file-upload-with-multer
-   ```
 
-2. Install the dependencies:
-   ```bash
-   npm install
-   ```
+```bash
+git clone <repository-url>
+cd file-uploader
+```
 
-3. Start the application:
-   ```bash
-   npm start
-   ```
+2. Install dependencies:
 
-   For development with auto-restart:
-   ```bash
-   npm run dev
-   ```
+```bash
+npm install
+```
 
-4. Open your browser and navigate to `http://localhost:3000`
+3. Create a `.env` file in the root directory:
+
+```env
+PORT=3000
+NODE_ENV=development
+```
+
+4. Create required directories:
+
+```bash
+mkdir uploads
+mkdir uploads/thumbnails
+```
+
+## Usage
+
+1. Start the development server:
+
+```bash
+npm run dev
+```
+
+2. Open your browser and navigate to:
+
+```
+http://localhost:3000
+```
+
+## API Endpoints
+
+### Upload Files
+
+- **POST** `/upload`
+  - Accepts multiple files
+  - Maximum file size: 10MB
+  - Supported formats: Images (JPG, PNG, GIF), Documents (PDF, DOC, DOCX), Text files
+
+### Get Files
+
+- **GET** `/api/files`
+  - Returns list of uploaded files
+  - Includes file metadata (name, size, type, upload date)
+
+### Delete File
+
+- **DELETE** `/api/files/:filename`
+  - Deletes specified file and its thumbnail (if exists)
 
 ## Project Structure
 
 ```
-file-upload-with-multer/
-├── app.js              # Main application file
-├── package.json        # Project dependencies
-├── uploads/            # Directory for uploaded files
-└── views/              # EJS templates
-    └── index.ejs       # Main upload interface
+file-uploader/
+├── src/
+│   ├── routes/
+│   │   └── fileRoutes.js
+│   ├── views/
+│   │   ├── layouts/
+│   │   │   └── main.ejs
+│   │   ├── home.ejs
+│   │   ├── gallery.ejs
+│   │   └── error.ejs
+│   └── app.js
+├── uploads/
+│   └── thumbnails/
+├── .env
+├── package.json
+└── README.md
 ```
 
 ## Technologies Used
 
-- Node.js
-- Express.js
-- Multer (for handling multipart/form-data)
-- EJS (Embedded JavaScript templates)
-- Bootstrap (for responsive design)
+- **Backend**
 
-## How It Works
+  - Node.js
+  - Express.js
+  - Multer (file upload)
+  - Sharp (image processing)
 
-1. The application uses Express.js as the web framework
-2. Multer middleware handles the file uploads
-3. Files are stored in the 'uploads' directory
-4. EJS templates render the user interface
-5. Bootstrap provides responsive styling
+- **Frontend**
+  - EJS (templating)
+  - Bootstrap 5
+  - Font Awesome
+  - Axios
 
-## Customization
+## Contributing
 
-- To change the upload directory, modify the `uploadDir` variable in `app.js`
-- To allow different file types, update the `fileFilter` function in `app.js`
-- To change the maximum file size, modify the `limits` option in the multer configuration
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [Express.js](https://expressjs.com/)
+- [Bootstrap](https://getbootstrap.com/)
+- [Font Awesome](https://fontawesome.com/)
+- [Multer](https://github.com/expressjs/multer)
+- [Sharp](https://sharp.pixelplumbing.com/)
