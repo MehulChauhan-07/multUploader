@@ -133,28 +133,203 @@
       .gallery-actions .delete-file:hover {
         background-color: #dc3545;
       }
+
+      /* Enhanced Gallery Styles */
+      .file-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+      }
+
+      .file-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      }
+
+      .file-preview {
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .file-preview img {
+        max-height: 100%;
+        width: auto;
+        object-fit: contain;
+      }
+
+      .file-icon {
+        padding: 2rem;
+        text-align: center;
+      }
+
+      .file-icon i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+      }
+
+      .file-info {
+        padding: 1rem;
+      }
+
+      .file-actions {
+        opacity: 0;
+        transition: opacity 0.2s;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+      }
+
+      .file-card:hover .file-actions {
+        opacity: 1;
+      }
+
+      .file-actions button {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        border: none;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .file-actions button:hover {
+        transform: scale(1.1);
+      }
+
+      .file-actions .preview-btn {
+        background: #007bff;
+        color: white;
+      }
+
+      .file-actions .download-btn {
+        background: #28a745;
+        color: white;
+      }
+
+      .file-actions .delete-btn {
+        background: #dc3545;
+        color: white;
+      }
+
+      /* Loading Animation */
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255,255,255,0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s, visibility 0.3s;
+      }
+
+      .loading-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #007bff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      /* File Type Badges */
+      .file-type-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 0.25rem 0.5rem;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        color: white;
+      }
+
+      .badge-image { background: #007bff; }
+      .badge-pdf { background: #dc3545; }
+      .badge-doc { background: #28a745; }
+      .badge-video { background: #6f42c1; }
+      .badge-audio { background: #fd7e14; }
+      .badge-archive { background: #6c757d; }
+      .badge-other { background: #20c997; }
+
+      /* Search and Filter Enhancement */
+      .search-container {
+        position: relative;
+      }
+
+      .search-container i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+      }
+
+      .search-input {
+        padding-left: 35px;
+      }
+
+      .filter-container {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .filter-container select {
+        min-width: 150px;
+      }
     </style>
   </head>
   <body>
-    <%- include('partials/header.ejs', { activePage: activePage }) %>
+    <%- include('partials/header.ejs', { activePage: 'gallery' }) %>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay">
+      <div class="loading-spinner"></div>
+    </div>
 
     <main class="container py-4">
       <div class="row mb-4">
         <div class="col-md-6">
-          <div class="input-group">
-            <span class="input-group-text">
-              <i class="fas fa-search"></i>
-            </span>
+          <div class="search-container">
+            <i class="fas fa-search"></i>
             <input
               type="text"
               id="searchInput"
-              class="form-control"
+              class="form-control search-input"
               placeholder="Search files by name or type..."
             />
           </div>
         </div>
         <div class="col-md-6">
-          <div class="d-flex gap-2">
+          <div class="filter-container">
             <select id="fileTypeFilter" class="form-select" onchange="filterByType(this.value)">
               <option value="all" <%= selectedType === 'all' ? 'selected' : '' %>>All File Types</option>
               <option value="image" <%= selectedType === 'image' ? 'selected' : '' %>>Images</option>
@@ -186,8 +361,8 @@
           data-uploaded="<%= file.uploadedAt %>"
           data-size="<%= file.size %>"
         >
-          <div class="card h-100">
-            <div class="card-img-top file-preview">
+          <div class="card h-100 file-card">
+            <div class="file-preview">
               <% if (file.mimetype.startsWith('image/')) { %>
               <img
                 src="/uploads/<%= file.filename %>"
@@ -219,6 +394,25 @@
                 <% } %>
               </div>
               <% } %>
+              <span class="file-type-badge badge-<%= file.mimetype.startsWith('image/') ? 'image' : 
+                file.mimetype.includes('pdf') ? 'pdf' : 
+                file.mimetype.includes('document') || file.mimetype.includes('word') ? 'doc' :
+                file.mimetype.startsWith('video/') ? 'video' :
+                file.mimetype.startsWith('audio/') ? 'audio' :
+                file.mimetype.includes('zip') || file.mimetype.includes('rar') ? 'archive' : 'other' %>">
+                <%= file.mimetype.split('/')[1].toUpperCase() %>
+              </span>
+              <div class="file-actions">
+                <button class="preview-btn" onclick="previewFile('<%= file.url %>', '<%= file.mimetype %>')">
+                  <i class="fas fa-eye"></i> Preview
+                </button>
+                <a href="/uploads/<%= file.filename %>" class="download-btn" download>
+                  <i class="fas fa-download"></i> Download
+                </a>
+                <button class="delete-btn" onclick="deleteFile('<%= file.filename %>')">
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+              </div>
             </div>
             <div class="card-body">
               <h5
@@ -228,11 +422,6 @@
                 <%= file.originalname %>
               </h5>
               <p class="card-text">
-                <small class="text-muted">
-                  <i class="fas fa-file me-1"></i>
-                  <%= file.mimetype.split('/')[1].toUpperCase() %>
-                </small>
-                <br />
                 <small class="text-muted">
                   <i class="fas fa-calendar me-1"></i>
                   <%= new Date(file.uploadedAt).toLocaleDateString() %>
@@ -244,30 +433,26 @@
                 </small>
               </p>
             </div>
-            <div class="card-footer bg-transparent border-top-0">
-              <div class="btn-group w-100">
-                <a
-                  href="/uploads/<%= file.filename %>"
-                  class="btn btn-sm btn-outline-primary"
-                  download
-                >
-                  <i class="fas fa-download me-1"></i>
-                  Download
-                </a>
-                <button
-                  class="btn btn-sm btn-outline-danger delete-file"
-                  data-filename="<%= file.filename %>"
-                >
-                  <i class="fas fa-trash me-1"></i>
-                  Delete
-                </button>
-              </div>
-            </div>
           </div>
         </div>
         <% }); %>
       </div>
     </main>
+
+    <!-- Preview Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body text-center">
+            <div id="previewContent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <%- include('partials/footer.ejs') %>
 
@@ -307,10 +492,76 @@
       const fileTypeFilter = document.getElementById('fileTypeFilter');
       const sortOrder = document.getElementById('sortOrder');
       const fileGrid = document.getElementById('fileGrid');
+      const loadingOverlay = document.querySelector('.loading-overlay');
+      const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+
+      // Function to show/hide loading overlay
+      function toggleLoading(show) {
+        loadingOverlay.classList.toggle('active', show);
+      }
 
       // Function to filter by type using backend
       function filterByType(type) {
+        toggleLoading(true);
         window.location.href = `/gallery?type=${type}`;
+      }
+
+      // Function to preview file
+      function previewFile(url, mimeType) {
+        const modalTitle = document.querySelector('#previewModal .modal-title');
+        const previewContent = document.getElementById('previewContent');
+        
+        modalTitle.textContent = url.split('/').pop();
+        previewContent.innerHTML = '';
+
+        if (mimeType.startsWith('image/')) {
+          previewContent.innerHTML = `<img src="${url}" class="img-fluid" alt="Preview">`;
+        } else if (mimeType.includes('pdf')) {
+          previewContent.innerHTML = `<iframe src="${url}" width="100%" height="500px"></iframe>`;
+        } else if (mimeType.startsWith('video/')) {
+          previewContent.innerHTML = `
+            <video controls class="w-100">
+              <source src="${url}" type="${mimeType}">
+              Your browser does not support the video tag.
+            </video>`;
+        } else if (mimeType.startsWith('audio/')) {
+          previewContent.innerHTML = `
+            <audio controls class="w-100">
+              <source src="${url}" type="${mimeType}">
+              Your browser does not support the audio tag.
+            </audio>`;
+        } else {
+          previewContent.innerHTML = `
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>
+              Preview not available for this file type.
+              <a href="${url}" class="btn btn-primary ms-3" download>
+                <i class="fas fa-download me-1"></i>
+                Download
+              </a>
+            </div>`;
+        }
+
+        previewModal.show();
+      }
+
+      // Function to delete file
+      async function deleteFile(filename) {
+        if (confirm('Are you sure you want to delete this file?')) {
+          toggleLoading(true);
+          try {
+            const response = await axios.delete(`/api/files/${filename}`);
+            if (response.data.success) {
+              const fileElement = document.querySelector(`[data-filename="${filename.toLowerCase()}"]`);
+              fileElement.remove();
+              showNotification('File deleted successfully', 'success');
+            }
+          } catch (error) {
+            showNotification(error.response?.data?.message || 'Error deleting file', 'danger');
+          } finally {
+            toggleLoading(false);
+          }
+        }
       }
 
       function filterAndSortFiles() {
@@ -354,23 +605,8 @@
       searchInput.addEventListener('input', filterAndSortFiles);
       sortOrder.addEventListener('change', filterAndSortFiles);
 
-      // File deletion functionality
-      document.querySelectorAll('.delete-file').forEach(button => {
-        button.addEventListener('click', async function() {
-          const filename = this.dataset.filename;
-          if (confirm('Are you sure you want to delete this file?')) {
-            try {
-              const response = await axios.delete(`/api/files/${filename}`);
-              if (response.data.success) {
-                this.closest('.col-md-4').remove();
-                showNotification('File deleted successfully', 'success');
-              }
-            } catch (error) {
-              showNotification(error.response?.data?.message || 'Error deleting file', 'danger');
-            }
-          }
-        });
-      });
+      // Initialize loading state
+      toggleLoading(false);
     </script>
   </body>
 </html>
