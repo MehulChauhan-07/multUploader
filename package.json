@@ -1,0 +1,33 @@
+{
+  "name": "multer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "MehulChauhan-07",
+  "license": "ISC",
+  "description": "",
+  "keywords": [
+    "node",
+    "express",
+    "multer",
+    "ejs",
+    "file-upload"
+  ],
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
+    "mongoose": "^8.15.1",
+    "multer": "^2.0.1",
+    "nodemon": "^3.1.10",
+    "path": "^0.12.7",
+    "sharp": "^0.34.2",
+    "socket.io": "^4.8.1"
+  }
+}
