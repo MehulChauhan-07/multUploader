@@ -6,7 +6,6 @@ import {fileURLToPath} from "url";
 
 const router = express.Router();
 
-
 // Define the upload directory properly
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,21 +36,12 @@ const upload = multer({
     }
 });
 
-router.post('/upload', multer().single('uploadedImage'), (req, res) => {
+router.post('/upload', upload.single('uploadedImage'), (req, res) => {
     const file = req.file;
     console.log('File received:', file);
     if (!file) {
         return res.status(400).json({ error: 'No file uploaded' });
     }
-
-    // Define the upload directory
-    const uploadDir = path.join(__dirname, 'uploads');
-
-    // Ensure the upload directory exists
-    if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
 
     return res.status(200).json({
         status: "success",
@@ -63,7 +53,10 @@ router.post('/upload', multer().single('uploadedImage'), (req, res) => {
             path: file.path
         }
     });
+});
 
+router.get('/', (req, res) => {
+    return res.status(200).render("home");
 });
 
 export default router;
