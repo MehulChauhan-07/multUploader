@@ -213,7 +213,7 @@
                   id="fileInput"
                   multiple
                   class="d-none"
-                  accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain,application/zip,application/x-rar-compressed,application/x-tar,application/gzip,application/x-7z-compressed,audio/*,video/*"
+                  accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar,.7z"
                 />
                 <button
                   class="btn btn-primary"
@@ -223,7 +223,12 @@
                   Choose Files
                 </button>
                 <p class="text-muted mt-2">
-                  <small>Maximum file size: 10MB</small>
+                  <small>Maximum file size: 10MB</small><br />
+                  <small
+                    >Accepted file types: Images (JPG, PNG, GIF), Documents
+                    (PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT), Archives (ZIP,
+                    RAR, 7Z)</small
+                  >
                 </p>
               </div>
 
@@ -380,6 +385,33 @@
             );
             return false;
           }
+
+          // Check file type
+          const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/gif",
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-powerpoint",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "text/plain",
+            "application/zip",
+            "application/x-rar-compressed",
+            "application/x-7z-compressed",
+          ];
+
+          if (!allowedTypes.includes(file.type)) {
+            showNotification(
+              `File ${file.name} is not an accepted file type.`,
+              "danger"
+            );
+            return false;
+          }
+
           return true;
         });
 
