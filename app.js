@@ -86,13 +86,13 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // Serve static files - make sure these come before routes
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
-app.use("/public", express.static(path.join(__dirname, "../public")));
-app.use(express.static(path.join(__dirname, "../public")));
+app.use("/uploads", express.static(path.join(__dirname, "./uploads")));
+app.use("/public", express.static(path.join(__dirname, "./public")));
+app.use(express.static(path.join(__dirname, "./public")));
 
 // Favicon route
 app.get("/favicon.ico", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public", "favicon.ico"));
+  res.sendFile(path.join(__dirname, "./public", "favicon.ico"));
 });
 
 // Root route redirect

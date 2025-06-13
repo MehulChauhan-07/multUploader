@@ -1,34 +1,12 @@
-import express from "express";
 import multer from "multer";
 import path from "path";
-import fs from "fs/promises";
 import { fileURLToPath } from "url";
-import sharp from "sharp";
-import mime from "mime-types";
-import fileController from "../controllers/fileController.js";
-import upload from "../config/multer.js";
 
-const router = express.Router();
-
-// Get directory name in ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Configure upload directory
-const uploadDir = path.join(__dirname, "../../uploads");
-const thumbnailDir = path.join(uploadDir, "thumbnails");
-
-// Ensure directories exist
-async function ensureDirectories() {
-  try {
-    await fs.mkdir(uploadDir, { recursive: true });
-    await fs.mkdir(thumbnailDir, { recursive: true });
-  } catch (error) {
-    console.error("Error creating directories:", error);
-  }
-}
-
-ensureDirectories();
+const uploadDir = path.join(__dirname, "../uploads");
 
 // Configure multer storage
 const storage = multer.diskStorage({
@@ -48,13 +26,11 @@ const fileFilter = (req, file, cb) => {
   const allowedTypes = [
     // Images
     "image/jpeg",
-    "image/jpeg",
     "image/png",
     "image/gif",
     "image/svg+xml",
     "image/webp",
     "image/bmp",
-    "image/tiff",
     "image/tiff",
 
     // Documents
@@ -115,7 +91,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 // Configure multer
-const uploadMulter = multer({
+const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
@@ -123,40 +99,4 @@ const uploadMulter = multer({
   },
 });
 
-// Helper function to get file info
-async function getFileInfo(filePath) {
-  try {
-    const stats = await fs.stat(filePath);
-    const ext = path.extname(filePath).toLowerCase();
-    const mimeType = mime.lookup(ext) || "application/octet-stream";
-
-    return {
-      size: stats.size,
-      createdAt: stats.birthtime,
-      mimeType: mimeType,
-      isImage: mimeType.startsWith("image/"),
-    };
-  } catch (error) {
-    console.error("Error getting file info:", error);
-    return null;
-  }
-}
-
-// Helper function to format file size
-function formatFileSize(bytes) {
-  if (bytes === 0) return "0 Bytes";
-  const k = 1024;
-  const sizes = ["Bytes", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-}
-
-// Page Routes
-router.get("/upload", fileController.getUploadPage);
-router.get("/gallery", fileController.getGallery);
-
-// API Routes
-router.post("/upload", uploadMulter.array("files"), fileController.uploadFiles);
-router.delete("/api/files/:filename", fileController.deleteFile);
-
-export default router;
+export default upload;

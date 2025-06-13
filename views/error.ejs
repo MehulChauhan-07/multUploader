@@ -36,12 +36,10 @@
       }
       main {
         flex-grow: 1; /* Makes the main content expand and push footer down */
-        /* No padding here, use Bootstrap's container padding */
       }
       footer {
         flex-shrink: 0; /* Prevent footer from shrinking */
       }
-
       /* Custom Styles (can be moved to a separate file later) */
       .navbar {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -64,7 +62,6 @@
         height: 2px;
         background-color: var(--bs-primary);
       }
-
       /* Notification Styles */
       .notification {
         position: fixed;
@@ -74,19 +71,43 @@
         min-width: 300px;
       }
     </style>
-    <%- defineContent('styles') %>
+
+    <!-- Styles for this page (if any) -->
+    <style>
+      /* Add any specific styles for the error page here if needed */
+    </style>
   </head>
   <body>
-    <!-- Header Partial -->
-    <%- include('../partials/header.ejs') %>
+    <%- include('partials/header.ejs', { activePage: 'error' }) %>
 
-    <!-- Main Content Area -->
-    <main>
-      <div class="container py-4"><%- body %></div>
+    <main class="container py-4">
+      <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+          <div class="card">
+            <div class="card-body py-5">
+              <div class="error-container">
+                <div class="error-content">
+                  <i class="fas fa-exclamation-circle error-icon"></i>
+                  <h1 class="error-title">Error</h1>
+                  <p class="error-message"><%= message %></p>
+                  <% if (error && process.env.NODE_ENV === 'development') { %>
+                  <div class="error-details">
+                    <pre><%= error.stack %></pre>
+                  </div>
+                  <% } %>
+                  <a href="/" class="btn btn-primary">
+                    <i class="fas fa-home"></i>
+                    Return Home
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
 
-    <!-- Footer Partial -->
-    <%- include('../partials/footer') %>
+    <%- include('partials/footer.ejs') %>
 
     <!-- Notification Container -->
     <div id="notificationContainer"></div>
@@ -97,9 +118,8 @@
     <!-- Axios JS -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-    <!-- Custom JS -->
+    <!-- Custom JS (Notification System) -->
     <script>
-      // Notification system
       function showNotification(message, type = "info") {
         const container = document.getElementById("notificationContainer");
         const notification = document.createElement("div");
@@ -110,14 +130,11 @@
             `;
         container.appendChild(notification);
 
-        // Auto dismiss after 5 seconds
         setTimeout(() => {
           notification.classList.remove("show");
           setTimeout(() => notification.remove(), 150);
         }, 5000);
       }
     </script>
-
-    <%- script %>
   </body>
 </html>

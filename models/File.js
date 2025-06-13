@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 class File {
   constructor() {
-    this.uploadDir = path.join(__dirname, "../../uploads");
+    this.uploadDir = path.join(__dirname, "../uploads");
     this.thumbnailDir = path.join(this.uploadDir, "thumbnails");
   }
 

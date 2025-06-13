@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %> - File Uploader</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+
+    <!-- Base CSS -->
+    <link rel="stylesheet" href="/css/base.css" />
+
+    <!-- Page-specific CSS -->
+    <% if (typeof pageStyles !== 'undefined') { %> <%
+    pageStyles.forEach(function(style) { %>
+    <link rel="stylesheet" href="/css/<%= style %>.css" />
+    <% }); %> <% } %>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <nav class="nav">
+          <a href="/" class="logo">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>File Uploader</span>
+          </a>
+
+          <ul class="nav-links">
+            <li class="nav-item">
+              <a
+                href="/upload"
+                class="nav-link <%= activePage === 'upload' ? 'active' : '' %>"
+              >
+                <i class="fas fa-upload"></i>
+                Upload
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                href="/gallery"
+                class="nav-link <%= activePage === 'gallery' ? 'active' : '' %>"
+              >
+                <i class="fas fa-images"></i>
+                Gallery
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <div class="container"><%- body %></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p>
+          &copy; <%= new Date().getFullYear() %> File Uploader. All rights
+          reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Base JavaScript -->
+    <script src="/js/base.js"></script>
+
+    <!-- Page-specific JavaScript -->
+    <% if (typeof pageScripts !== 'undefined') { %> <%
+    pageScripts.forEach(function(script) { %>
+    <script src="/js/<%= script %>.js"></script>
+    <% }); %> <% } %>
+  </body>
+</html>
