@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs/promises";
 import { fileURLToPath } from "url";
 import mime from "mime-types";
-import fileController from "../controllers/fileController.js"
+import fileController from "../controllers/fileController.js";
 
 const router = express.Router();
 
@@ -156,5 +156,7 @@ router.get("/gallery", fileController.getGallery);
 // API Routes
 router.post("/upload", uploadMulter.array("files"), fileController.uploadFiles);
 router.delete("/api/files/:filename", fileController.deleteFile);
+router.get("/api/files/recent", fileController.getRecentFiles);
+router.get("/recent", fileController.getRecentFiles);
 
 export default router;

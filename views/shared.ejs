@@ -1,0 +1,77 @@
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><%= file.originalname %></h4>
+                <div>
+                    <a href="/uploads/<%= file.filename %>" class="btn btn-primary" download="<%= file.originalname %>">
+                        <i class="fas fa-download me-2"></i> Download
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="shared-file-container">
+                    <% if (file.mimetype.startsWith('image/')) { %>
+                        <div class="text-center p-3">
+                            <img src="/uploads/<%= file.filename %>" class="img-fluid" alt="<%= file.originalname %>">
+                        </div>
+                    <% } else if (file.mimetype === 'application/pdf') { %>
+                        <div class="pdf-container">
+                            <iframe src="/uploads/<%= file.filename %>" width="100%" height="600px"></iframe>
+                        </div>
+                    <% } else { %>
+                        <div class="text-center p-5">
+                            <div class="file-icon mb-4">
+                                <% if (file.mimetype.includes('pdf')) { %>
+                                    <i class="fas fa-file-pdf fa-5x text-danger"></i>
+                                <% } else if (file.mimetype.includes('word') || file.mimetype.includes('document')) { %>
+                                    <i class="fas fa-file-word fa-5x text-primary"></i>
+                                <% } else if (file.mimetype.includes('excel') || file.mimetype.includes('spreadsheet')) { %>
+                                    <i class="fas fa-file-excel fa-5x text-success"></i>
+                                <% } else if (file.mimetype.includes('powerpoint') || file.mimetype.includes('presentation')) { %>
+                                    <i class="fas fa-file-powerpoint fa-5x text-warning"></i>
+                                <% } else if (file.mimetype.includes('video')) { %>
+                                    <i class="fas fa-file-video fa-5x text-info"></i>
+                                <% } else if (file.mimetype.includes('audio')) { %>
+                                    <i class="fas fa-file-audio fa-5x text-secondary"></i>
+                                <% } else if (file.mimetype.includes('zip') || file.mimetype.includes('rar')) { %>
+                                    <i class="fas fa-file-archive fa-5x text-dark"></i>
+                                <% } else { %>
+                                    <i class="fas fa-file fa-5x text-secondary"></i>
+                                <% } %>
+                            </div>
+                            <h5 class="mb-3"><%= file.originalname %></h5>
+                            <p class="mb-4">This file type cannot be previewed directly in the browser.</p>
+                            <a href="/uploads/<%= file.filename %>" class="btn btn-lg btn-primary" download="<%= file.originalname %>">
+                                <i class="fas fa-download me-2"></i> Download File
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <div class="row">
+                    <div class="col-md-6">
+                        <small><i class="fas fa-info-circle me-1"></i> File size: <%= (file.size / 1024).toFixed(2) %> KB</small>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <% if (file.shareExpires) { %>
+                            <small><i class="fas fa-clock me-1"></i> Link expires: <%= new Date(file.shareExpires).toLocaleString() %></small>
+                        <% } else { %>
+                            <small><i class="fas fa-infinity me-1"></i> Link never expires</small>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body text-center">
+                <p class="mb-2">Want to upload and share your own files?</p>
+                <a href="/" class="btn btn-outline-primary">
+                    <i class="fas fa-cloud-upload-alt me-1"></i> Try File Uploader
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

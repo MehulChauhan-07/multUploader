@@ -1,0 +1,201 @@
+/* Dark mode styles */
+:root[data-theme="dark"] {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-tertiary: #3d3d3d;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --border-color: #404040;
+  --card-bg: #2d2d2d;
+  --input-bg: #3d3d3d;
+  --hover-bg: #404040;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode overrides */
+:root[data-theme="dark"] {
+  /* Background colors */
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .card {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] .card-header {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] .card-footer {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+/* Form elements */
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea {
+  background-color: var(--input-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] input:focus,
+:root[data-theme="dark"] select:focus,
+:root[data-theme="dark"] textarea:focus {
+  background-color: var(--input-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Buttons */
+:root[data-theme="dark"] .btn-outline-primary {
+  color: #4dabf7;
+  border-color: #4dabf7;
+}
+
+:root[data-theme="dark"] .btn-outline-primary:hover {
+  background-color: #4dabf7;
+  color: var(--bg-primary);
+}
+
+:root[data-theme="dark"] .btn-outline-secondary {
+  color: var(--text-secondary);
+  border-color: var(--text-secondary);
+}
+
+:root[data-theme="dark"] .btn-outline-secondary:hover {
+  background-color: var(--text-secondary);
+  color: var(--bg-primary);
+}
+
+/* Upload area */
+:root[data-theme="dark"] .upload-area {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] .upload-area.dragover {
+  background-color: var(--bg-tertiary);
+  border-color: #4dabf7;
+}
+
+:root[data-theme="dark"] .upload-area-specialized {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] .upload-area-specialized.dragover {
+  background-color: var(--bg-tertiary);
+  border-color: #4dabf7;
+}
+
+/* File list */
+:root[data-theme="dark"] .file-item {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] .file-item:hover {
+  background-color: var(--hover-bg);
+}
+
+/* Modal */
+:root[data-theme="dark"] .modal-content {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] .modal-header {
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] .modal-footer {
+  border-color: var(--border-color);
+}
+
+/* Table */
+:root[data-theme="dark"] .table {
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .table td,
+:root[data-theme="dark"] .table th {
+  border-color: var(--border-color);
+}
+
+/* Navigation */
+:root[data-theme="dark"] .navbar {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] .nav-link {
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .nav-link:hover {
+  color: var(--text-secondary);
+}
+
+/* Dark mode toggle button */
+.dark-mode-toggle {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  border-radius: 15px;
+  background-color: var(--bg-tertiary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dark-mode-toggle::before {
+  content: "";
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+.dark-mode-toggle.active {
+  background-color: #4dabf7;
+}
+
+.dark-mode-toggle.active::before {
+  transform: translateX(30px);
+}
+
+/* Skeleton loader */
+:root[data-theme="dark"] .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-tertiary) 25%,
+    var(--bg-secondary) 50%,
+    var(--bg-tertiary) 75%
+  );
+}
+
+/* Text colors */
+:root[data-theme="dark"] .text-muted {
+  color: var(--text-secondary) !important;
+}
+
+/* Shadows */
+:root[data-theme="dark"] .shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem var(--shadow-color) !important;
+}
+
+:root[data-theme="dark"] .shadow {
+  box-shadow: 0 0.5rem 1rem var(--shadow-color) !important;
+}
+
+:root[data-theme="dark"] .shadow-lg {
+  box-shadow: 0 1rem 3rem var(--shadow-color) !important;
+}

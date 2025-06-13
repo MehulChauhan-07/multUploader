@@ -1,1 +1,160 @@
- 
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Upload Files</h2>
+
+                <!-- Main Upload Area -->
+                <div class="upload-area" id="uploadArea" tabindex="0" role="button" aria-label="Upload area. Drag files here or click to select files.">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <h4>Drag & Drop Files Here</h4>
+                    <p class="text-muted">or</p>
+                    <input
+                            type="file"
+                            id="fileInput"
+                            multiple
+                            class="d-none"
+                            accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar,.7z"
+                            aria-label="File input"
+                    />
+                    <button
+                            class="btn btn-primary"
+                            onclick="document.getElementById('fileInput').click()"
+                    >
+                        <i class="fas fa-folder-open me-2"></i>
+                        Choose Files
+                    </button>
+                    <p class="text-muted mt-2">
+                        <small>Maximum file size: 10MB</small><br />
+                        <small>
+                            Accepted file types: Images (JPG, PNG, GIF), Documents
+                            (PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT), Archives (ZIP,
+                            RAR, 7Z)
+                        </small>
+                    </p>
+                </div>
+
+                <!-- Specialized Upload Areas -->
+                <h5 class="text-center mt-4 mb-3">Quick Upload by Type</h5>
+                <div class="row specialized-upload-container">
+                    <div class="col-md-4 specialized-upload-item mb-3">
+                        <div class="upload-area-specialized upload-area-images" data-accept="image/*" tabindex="0" role="button" aria-label="Upload images">
+                            <i class="fas fa-images upload-icon"></i>
+                            <h5>Images</h5>
+                            <small class="text-muted">JPG, PNG, GIF</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 specialized-upload-item mb-3">
+                        <div class="upload-area-specialized upload-area-docs" data-accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt" tabindex="0" role="button" aria-label="Upload documents">
+                            <i class="fas fa-file-alt upload-icon"></i>
+                            <h5>Documents</h5>
+                            <small class="text-muted">PDF, DOC, XLSX, TXT</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 specialized-upload-item mb-3">
+                        <div class="upload-area-specialized upload-area-other" data-accept=".zip,.rar,.7z" tabindex="0" role="button" aria-label="Upload archives">
+                            <i class="fas fa-archive upload-icon"></i>
+                            <h5>Archives</h5>
+                            <small class="text-muted">ZIP, RAR, 7Z</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File List -->
+                <div id="fileList" class="file-list" aria-live="polite">
+                    <!-- Files will be added here dynamically -->
+                </div>
+
+                <!-- Skeleton loaders that appear while files are loading -->
+                <div id="skeletonLoaders" class="d-none">
+                    <div class="skeleton file-item-skeleton"></div>
+                    <div class="skeleton file-item-skeleton"></div>
+                </div>
+
+                <!-- Upload Button -->
+                <div class="text-center mt-4">
+                    <button
+                            id="uploadButton"
+                            class="btn btn-success btn-lg"
+                            disabled
+                            onclick="uploadFiles()"
+                    >
+                        <i class="fas fa-upload me-2"></i>
+                        Upload Files
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-footer text-center">
+                <p class="text-muted mb-0">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Files are automatically scanned for viruses
+                </p>
+            </div>
+        </div>
+
+        <!-- Recent Uploads (optional) -->
+        <div class="card mt-4 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent Uploads</h5>
+                <a href="/gallery" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <div id="recentUploads" class="row row-cols-1 row-cols-md-4 g-3">
+                    <!-- This content can be loaded via AJAX or server-side, showing 4 most recent uploads -->
+                    <div class="col">
+                        <div class="skeleton" style="height: 150px; width: 100%;"></div>
+                    </div>
+                    <div class="col">
+                        <div class="skeleton" style="height: 150px; width: 100%;"></div>
+                    </div>
+                    <div class="col">
+                        <div class="skeleton" style="height: 150px; width: 100%;"></div>
+                    </div>
+                    <div class="col">
+                        <div class="skeleton" style="height: 150px; width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Keyboard Shortcuts Modal -->
+<div class="modal fade" id="keyboardShortcutsModal" tabindex="-1" aria-labelledby="keyboardShortcutsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="keyboardShortcutsModalLabel">Keyboard Shortcuts</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Shortcut</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Upload Files</td>
+                        <td><kbd>Ctrl</kbd> + <kbd>U</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>Browse Files</td>
+                        <td><kbd>Ctrl</kbd> + <kbd>O</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>Clear Selection</td>
+                        <td><kbd>Esc</kbd></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

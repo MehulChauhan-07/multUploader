@@ -1,0 +1,148 @@
+/* Upload Page Styles */
+
+.upload-area {
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-area:hover {
+  border-color: #3498db;
+  background: #f1f8ff;
+}
+
+.upload-area.dragover {
+  border-color: #3498db;
+  background: #e3f2fd;
+}
+
+.upload-icon {
+  font-size: 3rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.upload-area h4 {
+  margin-bottom: 0.5rem;
+  color: #495057;
+}
+
+/* Specialized Upload Areas */
+.upload-area-specialized {
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+}
+
+.upload-area-specialized:hover {
+  border-color: #3498db;
+  background: #f1f8ff;
+}
+
+.upload-area-specialized.dragover {
+  border-color: #3498db;
+  background: #e3f2fd;
+}
+
+.upload-area-images:hover {
+  border-color: #28a745;
+  background: #f0fff4;
+}
+
+.upload-area-docs:hover {
+  border-color: #007bff;
+  background: #f0f7ff;
+}
+
+.upload-area-other:hover {
+  border-color: #6c757d;
+  background: #f8f9fa;
+}
+
+/* File List */
+.file-list {
+  margin-top: 2rem;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.file-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.file-item .file-icon {
+  font-size: 2rem;
+  margin-right: 1rem;
+  color: #6c757d;
+}
+
+.file-item .file-info {
+  flex-grow: 1;
+}
+
+.file-item .file-name {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.file-item .file-size {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+.file-item .file-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Progress Bar */
+.progress {
+  height: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Recent Uploads */
+.recent-uploads .card {
+  transition: transform 0.3s ease;
+}
+
+.recent-uploads .card:hover {
+  transform: translateY(-5px);
+}
+
+.recent-uploads .card-img-top {
+  height: 150px;
+  object-fit: cover;
+}
+
+/* Keyboard Shortcuts Modal */
+kbd {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  color: #495057;
+  display: inline-block;
+  font-size: 0.875rem;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  white-space: nowrap;
+}

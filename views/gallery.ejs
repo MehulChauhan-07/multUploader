@@ -1,346 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= typeof title !== 'undefined' ? title : 'File Uploader' %></title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <!-- Font Awesome -->
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-      rel="stylesheet"
-    />
-    <!-- Custom Layout CSS (Essential for sticky footer) -->
-    <style>
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh; /* Ensure body takes at least full viewport height */
-      }
-      header {
-        flex-shrink: 0; /* Prevent header from shrinking */
-      }
-      main {
-        flex-grow: 1; /* Makes the main content expand and push footer down */
-      }
-      footer {
-        flex-shrink: 0; /* Prevent footer from shrinking */
-      }
-      /* Custom Styles (can be moved to a separate file later) */
-      .navbar {
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-      .navbar-brand {
-        font-weight: bold;
-      }
-      .nav-link {
-        position: relative;
-      }
-      .nav-link.active {
-        color: var(--bs-primary) !important;
-      }
-      .nav-link.active::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background-color: var(--bs-primary);
-      }
-      /* Notification Styles */
-      .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-        min-width: 300px;
-      }
-    </style>
-
-    <!-- Styles for this page -->
-    <style>
-      .gallery-item {
-        position: relative;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        overflow: hidden;
-        background-color: white;
-        transition: all 0.3s ease;
-      }
-
-      .gallery-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      }
-
-      .gallery-item img {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-      }
-
-      .gallery-actions {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-
-      .gallery-item:hover .gallery-actions {
-        opacity: 1;
-      }
-
-      .gallery-actions a {
-        color: white;
-        background-color: rgba(255, 255, 255, 0.2);
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-      }
-
-      .gallery-actions a:hover {
-        background-color: var(--bs-primary);
-        transform: scale(1.1);
-      }
-
-      .gallery-actions .delete-file:hover {
-        background-color: #dc3545;
-      }
-
-      /* Enhanced Gallery Styles */
-      .file-card {
-        transition: transform 0.2s, box-shadow 0.2s;
-        cursor: pointer;
-      }
-
-      .file-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      }
-
-      .file-preview {
-        height: 200px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f8f9fa;
-        overflow: hidden;
-        position: relative;
-      }
-
-      .file-preview img {
-        max-height: 100%;
-        width: auto;
-        object-fit: contain;
-      }
-
-      .file-icon {
-        padding: 2rem;
-        text-align: center;
-      }
-
-      .file-icon i {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-      }
-
-      .file-info {
-        padding: 1rem;
-      }
-
-      .file-actions {
-        opacity: 0;
-        transition: opacity 0.2s;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.7);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-      }
-
-      .file-card:hover .file-actions {
-        opacity: 1;
-      }
-
-      .file-actions button {
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        border: none;
-        background: white;
-        color: #333;
-        cursor: pointer;
-        transition: transform 0.2s;
-      }
-
-      .file-actions button:hover {
-        transform: scale(1.1);
-      }
-
-      .file-actions .preview-btn {
-        background: #007bff;
-        color: white;
-      }
-
-      .file-actions .download-btn {
-        background: #28a745;
-        color: white;
-      }
-
-      .file-actions .delete-btn {
-        background: #dc3545;
-        color: white;
-      }
-
-      /* Loading Animation */
-      .loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255,255,255,0.9);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s, visibility 0.3s;
-      }
-
-      .loading-overlay.active {
-        opacity: 1;
-        visibility: visible;
-      }
-
-      .loading-spinner {
-        width: 50px;
-        height: 50px;
-        border: 5px solid #f3f3f3;
-        border-top: 5px solid #007bff;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-
-      /* File Type Badges */
-      .file-type-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        padding: 0.25rem 0.5rem;
-        border-radius: 15px;
-        font-size: 0.75rem;
-        font-weight: bold;
-        color: white;
-      }
-
-      .badge-image { background: #007bff; }
-      .badge-pdf { background: #dc3545; }
-      .badge-doc { background: #28a745; }
-      .badge-video { background: #6f42c1; }
-      .badge-audio { background: #fd7e14; }
-      .badge-archive { background: #6c757d; }
-      .badge-other { background: #20c997; }
-
-      /* Search and Filter Enhancement */
-      .search-container {
-        position: relative;
-      }
-
-      .search-container i {
-        position: absolute;
-        left: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #6c757d;
-      }
-
-      .search-input {
-        padding-left: 35px;
-      }
-
-      .filter-container {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-      }
-
-      .filter-container select {
-        min-width: 150px;
-      }
-    </style>
-  </head>
-  <body>
-    <%- include('partials/header.ejs', { activePage: 'gallery' }) %>
-
-    <!-- Loading Overlay -->
-    <div class="loading-overlay">
-      <div class="loading-spinner"></div>
+<!-- Storage Overview -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <h5>Storage Overview</h5>
+        <div class="progress mb-2" style="height: 20px;">
+          <div class="progress-bar" role="progressbar" style="width: 35%"
+               aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">
+            35%
+          </div>
+        </div>
+        <p class="text-muted">3.5 GB of 10 GB used</p>
+      </div>
+      <div class="col-md-6">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5>Type Distribution</h5>
+          <div>
+            <small class="text-muted">Updated: <%= new Date('2025-06-13T16:43:00Z').toLocaleString() %></small>
+          </div>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <span class="badge bg-primary p-2">Images: 2.1 GB</span>
+          <span class="badge bg-danger p-2">Documents: 0.8 GB</span>
+          <span class="badge bg-success p-2">Archives: 0.3 GB</span>
+          <span class="badge bg-warning text-dark p-2">Other: 0.3 GB</span>
+        </div>
+      </div>
+    </div>
+  </div>
     </div>
 
-    <main class="container py-4">
-      <div class="row mb-4">
-        <div class="col-md-6">
-          <div class="search-container">
+<!-- Gallery Toolbar - Search, Filters, View Toggle -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-md-6 mb-3 mb-md-0">
+        <div class="d-flex align-items-center">
+          <div class="view-toggle btn-group me-3">
+            <button class="btn btn-sm btn-outline-primary active" data-view="grid" onclick="updateViewMode('grid')" aria-label="Grid view" data-bs-toggle="tooltip" title="Grid View">
+              <i class="fas fa-th"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-primary" data-view="list" onclick="updateViewMode('list')" aria-label="List view" data-bs-toggle="tooltip" title="List View">
+              <i class="fas fa-list"></i>
+            </button>
+          </div>
+          <div class="search-container flex-grow-1">
             <i class="fas fa-search"></i>
             <input
               type="text"
               id="searchInput"
               class="form-control search-input"
               placeholder="Search files by name or type..."
+                    aria-label="Search files"
             />
+          </div>
           </div>
         </div>
         <div class="col-md-6">
           <div class="filter-container">
-            <select id="fileTypeFilter" class="form-select" onchange="filterByType(this.value)">
-              <option value="all" <%= selectedType === 'all' ? 'selected' : '' %>>All File Types</option>
-              <option value="image" <%= selectedType === 'image' ? 'selected' : '' %>>Images</option>
-              <option value="pdf" <%= selectedType === 'pdf' ? 'selected' : '' %>>PDFs</option>
-              <option value="doc" <%= selectedType === 'doc' ? 'selected' : '' %>>Documents</option>
-              <option value="video" <%= selectedType === 'video' ? 'selected' : '' %>>Videos</option>
-              <option value="audio" <%= selectedType === 'audio' ? 'selected' : '' %>>Audio</option>
-              <option value="archive" <%= selectedType === 'archive' ? 'selected' : '' %>>Archives</option>
-              <option value="other" <%= selectedType === 'other' ? 'selected' : '' %>>Others</option>
+          <select id="fileTypeFilter" class="form-select" onchange="filterByType(this.value)" aria-label="Filter by file type">
+            <option value="all" <%= typeof selectedType !== 'undefined' && selectedType === 'all' ? 'selected' : '' %>>All File Types</option>
+            <option value="image" <%= typeof selectedType !== 'undefined' && selectedType === 'image' ? 'selected' : '' %>>Images</option>
+            <option value="pdf" <%= typeof selectedType !== 'undefined' && selectedType === 'pdf' ? 'selected' : '' %>>PDFs</option>
+            <option value="doc" <%= typeof selectedType !== 'undefined' && selectedType === 'doc' ? 'selected' : '' %>>Documents</option>
+            <option value="video" <%= typeof selectedType !== 'undefined' && selectedType === 'video' ? 'selected' : '' %>>Videos</option>
+            <option value="audio" <%= typeof selectedType !== 'undefined' && selectedType === 'audio' ? 'selected' : '' %>>Audio</option>
+            <option value="archive" <%= typeof selectedType !== 'undefined' && selectedType === 'archive' ? 'selected' : '' %>>Archives</option>
+            <option value="other" <%= typeof selectedType !== 'undefined' && selectedType === 'other' ? 'selected' : '' %>>Others</option>
             </select>
-            <select id="sortOrder" class="form-select">
+          <select id="sortOrder" class="form-select" onchange="filterAndSortFiles()" aria-label="Sort files">
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
               <option value="name-asc">Name (A-Z)</option>
@@ -352,45 +80,131 @@
         </div>
       </div>
 
-      <div class="row" id="fileGrid">
+    <!-- Batch Actions -->
+    <div class="batch-actions mb-3" style="display: none;">
+      <div class="me-auto">
+        <span><strong><span class="selected-count">0</span></strong> files selected</span>
+      </div>
+      <button class="btn btn-sm btn-primary" onclick="batchDownloadFiles()">
+        <i class="fas fa-download me-1"></i> Download
+      </button>
+      <button class="btn btn-sm btn-danger" onclick="batchDeleteFiles()">
+        <i class="fas fa-trash me-1"></i> Delete
+      </button>
+      <button class="btn btn-sm btn-secondary" onclick="toggleAllFiles(document.getElementById('selectAll'))">
+        <i class="fas fa-times me-1"></i> Deselect All
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Breadcrumb for Folders -->
+<% if (typeof currentFolder !== 'undefined' && currentFolder) { %>
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/gallery">Home</a></li>
+      <% if (typeof folderPath !== 'undefined' && folderPath.length > 0) { %>
+        <% folderPath.forEach(folder => { %>
+          <li class="breadcrumb-item">
+            <a href="/gallery?folder=<%= folder.id %>"><%= folder.name %></a>
+          </li>
+        <% }) %>
+      <% } %>
+    </ol>
+  </nav>
+<% } %>
+
+<!-- Virtual Folders (if implemented in backend) -->
+<% if (typeof folders !== 'undefined' && folders && folders.length > 0) { %>
+  <div class="folders-container mb-4">
+    <h5 class="mb-3"><i class="fas fa-folder me-2"></i> Folders</h5>
+    <div class="row">
+      <% folders.forEach(folder => { %>
+        <div class="col-md-4 col-lg-3 mb-3">
+          <div class="folder-item" onclick="location.href='/gallery?folder=<%= folder._id %>'">
+            <i class="fas fa-folder folder-icon"></i>
+            <div>
+              <h6 class="folder-name"><%= folder.name %></h6>
+              <div class="folder-meta">
+                <span><%= folder.fileCount %> files</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+      <!-- New Folder Button -->
+      <div class="col-md-4 col-lg-3 mb-3">
+        <div class="folder-item" style="border-style: dashed; opacity: 0.7;" data-bs-toggle="modal" data-bs-target="#newFolderModal">
+          <i class="fas fa-folder-plus folder-icon"></i>
+          <div>
+            <h6 class="folder-name">Create New Folder</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% } %>
+
+<!-- Select All Option -->
+<div class="form-check mb-3">
+  <input class="form-check-input" type="checkbox" id="selectAll" onchange="toggleAllFiles(this)">
+  <label class="form-check-label" for="selectAll">Select All</label>
+</div>
+
+<!-- Files Grid/List Container -->
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3" id="fileGrid">
+  <% if (typeof files !== 'undefined' && files && files.length > 0) { %>
         <% files.forEach(file => { %>
         <div
-          class="col-md-4 col-lg-3 mb-4 file-item"
+              class="file-item col"
           data-filename="<%= file.filename.toLowerCase() %>"
           data-filetype="<%= file.mimetype.split('/')[0] %>"
           data-uploaded="<%= file.uploadedAt %>"
           data-size="<%= file.size %>"
+              data-tags="<%= file.tags ? file.tags.join(',') : '' %>"
         >
           <div class="card h-100 file-card">
+          <!-- File Selection Checkbox -->
+          <div class="form-check file-select">
+            <input
+                    class="form-check-input file-select-checkbox"
+                    type="checkbox"
+                    data-file-id="<%= file.filename %>"
+                    data-file-url="/uploads/<%= file.filename %>"
+                    id="select-<%= file.filename %>"
+                    onchange="toggleFileSelection(this, '<%= file.filename %>')"
+            >
+            <label class="form-check-label visually-hidden" for="select-<%= file.filename %>">
+              Select <%= file.originalname %>
+            </label>
+          </div>
+
             <div class="file-preview">
               <% if (file.mimetype.startsWith('image/')) { %>
               <img
                 src="/uploads/<%= file.filename %>"
                 alt="<%= file.originalname %>"
                 class="img-fluid"
+                      loading="lazy"
               />
               <% } else { %>
               <div class="file-icon">
                 <% if (file.mimetype.includes('pdf')) { %>
-                <i class="fas fa-file-pdf fa-3x text-danger"></i>
-                <% } else if (file.mimetype.includes('word') ||
-                file.mimetype.includes('document')) { %>
-                <i class="fas fa-file-word fa-3x text-primary"></i>
-                <% } else if (file.mimetype.includes('excel') ||
-                file.mimetype.includes('spreadsheet')) { %>
-                <i class="fas fa-file-excel fa-3x text-success"></i>
-                <% } else if (file.mimetype.includes('powerpoint') ||
-                file.mimetype.includes('presentation')) { %>
-                <i class="fas fa-file-powerpoint fa-3x text-warning"></i>
+                  <i class="fas fa-file-pdf text-danger"></i>
+                <% } else if (file.mimetype.includes('word') || file.mimetype.includes('document')) { %>
+                  <i class="fas fa-file-word text-primary"></i>
+                <% } else if (file.mimetype.includes('excel') || file.mimetype.includes('spreadsheet')) { %>
+                  <i class="fas fa-file-excel text-success"></i>
+                <% } else if (file.mimetype.includes('powerpoint') || file.mimetype.includes('presentation')) { %>
+                  <i class="fas fa-file-powerpoint text-warning"></i>
                 <% } else if (file.mimetype.includes('video')) { %>
-                <i class="fas fa-file-video fa-3x text-info"></i>
+                  <i class="fas fa-file-video text-info"></i>
                 <% } else if (file.mimetype.includes('audio')) { %>
-                <i class="fas fa-file-audio fa-3x text-secondary"></i>
-                <% } else if (file.mimetype.includes('zip') ||
-                file.mimetype.includes('rar')) { %>
-                <i class="fas fa-file-archive fa-3x text-dark"></i>
+                  <i class="fas fa-file-audio text-secondary"></i>
+                <% } else if (file.mimetype.includes('zip') || file.mimetype.includes('rar')) { %>
+                  <i class="fas fa-file-archive text-dark"></i>
                 <% } else { %>
-                <i class="fas fa-file fa-3x text-secondary"></i>
+                  <i class="fas fa-file text-secondary"></i>
                 <% } %>
               </div>
               <% } %>
@@ -403,14 +217,14 @@
                 <%= file.mimetype.split('/')[1].toUpperCase() %>
               </span>
               <div class="file-actions">
-                <button class="preview-btn" onclick="previewFile('<%= file.url %>', '<%= file.mimetype %>')">
-                  <i class="fas fa-eye"></i> Preview
+              <button class="preview-btn" onclick="previewFile('/uploads/<%= file.filename %>', '<%= file.mimetype %>', '<%= file.originalname %>')" aria-label="Preview <%= file.originalname %>">
+                <i class="fas fa-eye me-1"></i> Preview
                 </button>
-                <a href="/uploads/<%= file.filename %>" class="download-btn" download>
-                  <i class="fas fa-download"></i> Download
+              <a href="/uploads/<%= file.filename %>" class="download-btn" download="<%= file.originalname %>" aria-label="Download <%= file.originalname %>">
+                <i class="fas fa-download me-1"></i> Download
                 </a>
-                <button class="delete-btn" onclick="deleteFile('<%= file.filename %>')">
-                  <i class="fas fa-trash"></i> Delete
+              <button class="delete-btn" onclick="deleteFile('<%= file.filename %>')" aria-label="Delete <%= file.originalname %>">
+                <i class="fas fa-trash me-1"></i> Delete
                 </button>
               </div>
             </div>
@@ -422,191 +236,252 @@
                 <%= file.originalname %>
               </h5>
               <p class="card-text">
-                <small class="text-muted">
+              <small>
                   <i class="fas fa-calendar me-1"></i>
                   <%= new Date(file.uploadedAt).toLocaleDateString() %>
                 </small>
                 <br />
-                <small class="text-muted">
+              <small>
                   <i class="fas fa-weight me-1"></i>
                   <%= (file.size / 1024).toFixed(2) %> KB
                 </small>
               </p>
+
+            <!-- File Tags -->
+            <div class="file-tags border-top pt-2 mt-2">
+              <% if (file.tags && file.tags.length > 0) { %>
+                <% file.tags.forEach(tag => { %>
+                  <span class="badge bg-primary file-tag"><%= tag %></span>
+                <% }); %>
+              <% } %>
+              <button class="btn btn-sm btn-link add-tag-btn" onclick="showTagModal('<%= file.filename %>')">
+                <i class="fas fa-plus"></i> Tag
+              </button>
             </div>
           </div>
+          <div class="card-footer d-flex justify-content-between">
+            <button class="btn btn-sm btn-outline-secondary" onclick="shareFile('<%= file.filename %>', '<%= file.originalname %>')">
+              <i class="fas fa-share-alt me-1"></i> Share
+            </button>
+            <button class="btn btn-sm btn-outline-primary" onclick="moveFileModal('<%= file.filename %>')">
+              <i class="fas fa-folder me-1"></i> Move
+            </button>
+          </div>
         </div>
-        <% }); %>
       </div>
-    </main>
+    <% }); %>
+  <% } else { %>
+    <div class="col-12 text-center py-5">
+      <i class="fas fa-folder-open fa-4x text-secondary mb-3"></i>
+      <h4>No files found</h4>
+      <p class="text-muted">Upload some files to see them here</p>
+      <a href="/upload" class="btn btn-primary mt-2">
+        <i class="fas fa-upload me-2"></i> Upload Files
+      </a>
+    </div>
+  <% } %>
+</div>
+
+<!-- Pagination -->
+<% if (typeof pagination !== 'undefined' && pagination.totalPages > 1) { %>
+  <nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+      <li class="page-item <%= pagination.page === 1 ? 'disabled' : '' %>">
+        <a class="page-link" href="/gallery?page=<%= pagination.page - 1 %>&type=<%= selectedType || 'all' %>" tabindex="-1">Previous</a>
+      </li>
+
+      <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+        <li class="page-item <%= pagination.page === i ? 'active' : '' %>">
+          <a class="page-link" href="/gallery?page=<%= i %>&type=<%= selectedType || 'all' %>"><%= i %></a>
+        </li>
+      <% } %>
+
+      <li class="page-item <%= pagination.page === pagination.totalPages ? 'disabled' : '' %>">
+        <a class="page-link" href="/gallery?page=<%= pagination.page + 1 %>&type=<%= selectedType || 'all' %>">Next</a>
+      </li>
+    </ul>
+  </nav>
+<% } %>
+
+<!-- Skeleton loaders for gallery -->
+<div id="gallerySkeleton" class="gallery-skeleton d-none">
+  <% for(let i = 0; i < 8; i++) { %>
+    <div class="skeleton gallery-skeleton-item"></div>
+  <% } %>
+</div>
 
     <!-- Preview Modal -->
-    <div class="modal fade" id="previewModal" tabindex="-1">
-      <div class="modal-dialog modal-lg">
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="previewModalLabel"></h5>
+        <div class="preview-actions">
+          <a href="#" class="btn btn-sm btn-primary download-preview-btn" download>
+            <i class="fas fa-download"></i> Download
+          </a>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="previewContent" class="preview-container"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="shareModalLabel">Share File</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="shareLink" class="form-label">Share Link</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="shareLink" readonly>
+            <button class="btn btn-outline-secondary" onclick="copyShareLink()" aria-label="Copy link">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="shareExpiration" class="form-label">Expires After</label>
+          <select class="form-select" id="shareExpiration">
+            <option value="1h">1 Hour</option>
+            <option value="1d" selected>1 Day</option>
+            <option value="7d">7 Days</option>
+            <option value="30d">30 Days</option>
+            <option value="never">Never</option>
+          </select>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="shareNotifyDownload">
+          <label class="form-check-label" for="shareNotifyDownload">
+            Notify me when file is downloaded
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="copyShareLink()">
+          <i class="fas fa-copy me-1"></i> Copy Link
+        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tag Modal -->
+<div class="modal fade" id="tagModal" tabindex="-1" aria-labelledby="tagModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <h5 class="modal-title" id="tagModalLabel">Add Tags</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="tagFileId">
+        <div class="mb-3">
+          <label for="tagInput" class="form-label">Enter Tags</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="tagInput" placeholder="Work, Personal, Important...">
+            <button class="btn btn-outline-primary" onclick="addTag()">Add</button>
           </div>
-          <div class="modal-body text-center">
-            <div id="previewContent"></div>
+          <small class="form-text text-muted">Separate tags with commas</small>
+        </div>
+        <div id="currentTags" class="mt-3">
+          <!-- Current tags will be displayed here -->
+        </div>
+
+        <!-- Common Tags -->
+        <div class="mt-3">
+          <h6>Common Tags</h6>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="badge bg-light text-dark common-tag" onclick="selectCommonTag('Work')">Work</span>
+            <span class="badge bg-light text-dark common-tag" onclick="selectCommonTag('Personal')">Personal</span>
+            <span class="badge bg-light text-dark common-tag" onclick="selectCommonTag('Important')">Important</span>
+            <span class="badge bg-light text-dark common-tag" onclick="selectCommonTag('Project')">Project</span>
+            <span class="badge bg-light text-dark common-tag" onclick="selectCommonTag('Archive')">Archive</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="saveTags()">Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
     </div>
 
-    <%- include('partials/footer.ejs') %>
+<!-- Move File Modal -->
+<div class="modal fade" id="moveFileModal" tabindex="-1" aria-labelledby="moveFileModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="moveFileModalLabel">Move File</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="moveFileId">
+        <div class="mb-3">
+          <label for="folderSelect" class="form-label">Select Destination Folder</label>
+          <select class="form-select" id="folderSelect">
+            <option value="">Root (No Folder)</option>
+            <% if (typeof folders !== 'undefined' && folders && folders.length > 0) { %>
+              <% folders.forEach(folder => { %>
+                <option value="<%= folder._id %>"><%= folder.name %></option>
+              <% }); %>
+            <% } %>
+          </select>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <span>Or create a new folder:</span>
+          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#newFolderCollapse">
+            <i class="fas fa-folder-plus me-1"></i> New Folder
+          </button>
+        </div>
+        <div class="collapse mt-3" id="newFolderCollapse">
+          <div class="card card-body">
+            <div class="mb-3">
+              <label for="newFolderInput" class="form-label">Folder Name</label>
+              <input type="text" class="form-control" id="newFolderInput" placeholder="Enter folder name">
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="createNewFolder()">
+              Create & Select
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="moveFile()">Move</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <!-- Notification Container -->
-    <div id="notificationContainer"></div>
-
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Axios JS -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-    <!-- Custom JS -->
-    <script>
-      // Notification system
-      function showNotification(message, type = "info") {
-        const container = document.getElementById("notificationContainer");
-        const notification = document.createElement("div");
-        notification.className = `notification alert alert-${type} alert-dismissible fade show`;
-        notification.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-        container.appendChild(notification);
-
-        // Auto dismiss after 5 seconds
-        setTimeout(() => {
-          notification.classList.remove("show");
-          setTimeout(() => notification.remove(), 150);
-        }, 5000);
-      }
-    </script>
-
-    <script>
-      // File filtering and search functionality
-      const searchInput = document.getElementById('searchInput');
-      const fileTypeFilter = document.getElementById('fileTypeFilter');
-      const sortOrder = document.getElementById('sortOrder');
-      const fileGrid = document.getElementById('fileGrid');
-      const loadingOverlay = document.querySelector('.loading-overlay');
-      const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
-
-      // Function to show/hide loading overlay
-      function toggleLoading(show) {
-        loadingOverlay.classList.toggle('active', show);
-      }
-
-      // Function to filter by type using backend
-      function filterByType(type) {
-        toggleLoading(true);
-        window.location.href = `/gallery?type=${type}`;
-      }
-
-      // Function to preview file
-      function previewFile(url, mimeType) {
-        const modalTitle = document.querySelector('#previewModal .modal-title');
-        const previewContent = document.getElementById('previewContent');
-        
-        modalTitle.textContent = url.split('/').pop();
-        previewContent.innerHTML = '';
-
-        if (mimeType.startsWith('image/')) {
-          previewContent.innerHTML = `<img src="${url}" class="img-fluid" alt="Preview">`;
-        } else if (mimeType.includes('pdf')) {
-          previewContent.innerHTML = `<iframe src="${url}" width="100%" height="500px"></iframe>`;
-        } else if (mimeType.startsWith('video/')) {
-          previewContent.innerHTML = `
-            <video controls class="w-100">
-              <source src="${url}" type="${mimeType}">
-              Your browser does not support the video tag.
-            </video>`;
-        } else if (mimeType.startsWith('audio/')) {
-          previewContent.innerHTML = `
-            <audio controls class="w-100">
-              <source src="${url}" type="${mimeType}">
-              Your browser does not support the audio tag.
-            </audio>`;
-        } else {
-          previewContent.innerHTML = `
-            <div class="alert alert-info">
-              <i class="fas fa-info-circle me-2"></i>
-              Preview not available for this file type.
-              <a href="${url}" class="btn btn-primary ms-3" download>
-                <i class="fas fa-download me-1"></i>
-                Download
-              </a>
-            </div>`;
-        }
-
-        previewModal.show();
-      }
-
-      // Function to delete file
-      async function deleteFile(filename) {
-        if (confirm('Are you sure you want to delete this file?')) {
-          toggleLoading(true);
-          try {
-            const response = await axios.delete(`/api/files/${filename}`);
-            if (response.data.success) {
-              const fileElement = document.querySelector(`[data-filename="${filename.toLowerCase()}"]`);
-              fileElement.remove();
-              showNotification('File deleted successfully', 'success');
-            }
-          } catch (error) {
-            showNotification(error.response?.data?.message || 'Error deleting file', 'danger');
-          } finally {
-            toggleLoading(false);
-          }
-        }
-      }
-
-      function filterAndSortFiles() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const sortBy = sortOrder.value;
-        const fileItems = Array.from(document.querySelectorAll('.file-item'));
-
-        // Filter files by search term
-        fileItems.forEach(item => {
-          const filename = item.dataset.filename;
-          const matchesSearch = filename.includes(searchTerm);
-          item.style.display = matchesSearch ? '' : 'none';
-        });
-
-        // Sort files
-        const visibleItems = fileItems.filter(item => item.style.display !== 'none');
-        visibleItems.sort((a, b) => {
-          switch (sortBy) {
-            case 'newest':
-              return new Date(b.dataset.uploaded) - new Date(a.dataset.uploaded);
-            case 'oldest':
-              return new Date(a.dataset.uploaded) - new Date(b.dataset.uploaded);
-            case 'name-asc':
-              return a.dataset.filename.localeCompare(b.dataset.filename);
-            case 'name-desc':
-              return b.dataset.filename.localeCompare(a.dataset.filename);
-            case 'size-asc':
-              return parseInt(a.dataset.size) - parseInt(b.dataset.size);
-            case 'size-desc':
-              return parseInt(b.dataset.size) - parseInt(a.dataset.size);
-            default:
-              return 0;
-          }
-        });
-
-        // Reorder files in the grid
-        visibleItems.forEach(item => fileGrid.appendChild(item));
-      }
-
-      // Add event listeners
-      searchInput.addEventListener('input', filterAndSortFiles);
-      sortOrder.addEventListener('change', filterAndSortFiles);
-
-      // Initialize loading state
-      toggleLoading(false);
-    </script>
-  </body>
-</html>
+<!-- New Folder Modal -->
+<div class="modal fade" id="newFolderModal" tabindex="-1" aria-labelledby="newFolderModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newFolderModalLabel">Create New Folder</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="folderNameInput" class="form-label">Folder Name</label>
+          <input type="text" class="form-control" id="folderNameInput" placeholder="Enter folder name">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="createFolder()">Create</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

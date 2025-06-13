@@ -2,20 +2,20 @@ import express from "express";
 import { fileURLToPath } from "url";
 import path from "path";
 import * as dotenv from "dotenv";
-import events from "events";
-import fileRoutes from "./routes/fileRoutes.js";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import rateLimit from "express-rate-limit";
-
-// Increase max listeners to prevent warning
-events.defaultMaxListeners = 15;
+import expressLayouts from "express-ejs-layouts";
+import mongoose from "mongoose";
+import routes from "./routes/index.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 
 // Load environment variables
 dotenv.config();
 
+// Initialize express app
 const app = express();
 
 // Get equivalent of __dirname in ESM
@@ -82,47 +82,33 @@ app.use(
 );
 
 // Configure view engine and layouts
+app.use(expressLayouts);
+app.set("layout", path.join(__dirname, "views/layouts/main"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // Serve static files - make sure these come before routes
-app.use("/uploads", express.static(path.join(__dirname, "./uploads")));
-app.use("/public", express.static(path.join(__dirname, "./public")));
-app.use(express.static(path.join(__dirname, "./public")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/css", express.static(path.join(__dirname, "public/css")));
+app.use("/js", express.static(path.join(__dirname, "public/js")));
+app.use(express.static(path.join(__dirname, "public")));
 
-// Favicon route
-app.get("/favicon.ico", (req, res) => {
-  res.sendFile(path.join(__dirname, "./public", "favicon.ico"));
-});
+// Connect to MongoDB
+mongoose
+  .connect(
+    process.env.MONGODB_URI || "mongodb://localhost:27017/fileUploader",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
-// Root route redirect
-app.get("/", (req, res) => {
-  res.redirect("/upload");
-});
-
-// API routes
-app.use("/api", fileRoutes);
-
-// Page routes
-app.use("/", fileRoutes);
-
-// Add 404 handler for undefined routes
-app.use((req, res, next) => {
-  res.status(404).render("error", {
-    title: "Page Not Found",
-    message: `The page you're looking for doesn't exist.`,
-    error: { status: 404 },
-  });
-});
+// Register all routes
+app.use(routes);
 
 // Global error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).render("error", {
-    title: "Error",
-    message: err.message || "Something went wrong!",
-    error: process.env.NODE_ENV === "development" ? err : {},
-  });
-});
+app.use(errorHandler);
 
 export default app;
