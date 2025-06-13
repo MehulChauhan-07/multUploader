@@ -92,6 +92,8 @@ class FileController {
     res.render("home", {
       title: "File Upload",
       activePage: "upload",
+      pageStyle: "home.css",
+        pageScript: "home.js",
     });
   }
 }

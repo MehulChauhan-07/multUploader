@@ -1,90 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= title %> - File Uploader</title>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= typeof title !== 'undefined' ? title : 'File Uploader' %></title>
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
 
-    <!-- Base CSS -->
-    <link rel="stylesheet" href="/css/base.css" />
+  <!-- Main CSS -->
+  <link href="/css/main.css" rel="stylesheet" />
 
-    <!-- Page-specific CSS -->
-    <% if (typeof pageStyles !== 'undefined') { %> <%
-    pageStyles.forEach(function(style) { %>
-    <link rel="stylesheet" href="/css/<%= style %>.css" />
-    <% }); %> <% } %>
-  </head>
-  <body>
-    <!-- Header -->
-    <header class="header">
-      <div class="container">
-        <nav class="nav">
-          <a href="/" class="logo">
-            <i class="fas fa-cloud-upload-alt"></i>
-            <span>File Uploader</span>
-          </a>
+  <!-- Page specific CSS -->
+  <% if(typeof pageStyles !== 'undefined') { %>
+    <% pageStyles.forEach(function(style) { %>
+      <link href="/css/<%= style %>.css" rel="stylesheet" />
+    <% }); %>
+  <% } %>
+</head>
+<body>
+<%- include('../partials/header', { activePage: typeof activePage !== 'undefined' ? activePage : '' }) %>
 
-          <ul class="nav-links">
-            <li class="nav-item">
-              <a
-                href="/upload"
-                class="nav-link <%= activePage === 'upload' ? 'active' : '' %>"
-              >
-                <i class="fas fa-upload"></i>
-                Upload
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                href="/gallery"
-                class="nav-link <%= activePage === 'gallery' ? 'active' : '' %>"
-              >
-                <i class="fas fa-images"></i>
-                Gallery
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+<!-- Loading Overlay -->
+<div class="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-message mt-3">Processing...</div>
+</div>
 
-    <!-- Main Content -->
-    <main class="main">
-      <div class="container"><%- body %></div>
-    </main>
+<main class="container py-4">
+  <%- body %>
+</main>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <p>
-          &copy; <%= new Date().getFullYear() %> File Uploader. All rights
-          reserved.
-        </p>
-      </div>
-    </footer>
+<%- include('../partials/footer') %>
 
-    <!-- Base JavaScript -->
-    <script src="/js/base.js"></script>
+<!-- Notification Container -->
+<div id="notificationContainer"></div>
 
-    <!-- Page-specific JavaScript -->
-    <% if (typeof pageScripts !== 'undefined') { %> <%
-    pageScripts.forEach(function(script) { %>
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Axios JS -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- Common JS -->
+<script src="/js/main.js"></script>
+
+<!-- Page specific JS -->
+<% if(typeof pageScripts !== 'undefined') { %>
+  <% pageScripts.forEach(function(script) { %>
     <script src="/js/<%= script %>.js"></script>
-    <% }); %> <% } %>
-  </body>
+  <% }); %>
+<% } %>
+</body>
 </html>

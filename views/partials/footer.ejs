@@ -1,7 +1,18 @@
-<footer class="bg-light text-center py-3 border-top">
+<footer class="mt-auto py-3">
   <div class="container">
-    <p class="mb-0">
-      &copy; <%= new Date().getFullYear() %> File Uploader. All rights reserved.
-    </p>
+    <div class="row align-items-center">
+      <div class="col-md-6 text-center text-md-start">
+        <p class="mb-0">
+          <span class="text-muted">&copy; <%= new Date().getFullYear() %> File Uploader</span>
+        </p>
+      </div>
+      <div class="col-md-6 text-center text-md-end">
+        <p class="mb-0 text-muted">
+          <small>
+            Current Server Time: <%= new Date().toLocaleString() %>
+          </small>
+        </p>
+      </div>
+    </div>
   </div>
 </footer>
